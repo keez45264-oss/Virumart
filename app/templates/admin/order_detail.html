@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order['order_id'] }} - Admin{% endblock %}
+
+{% block content %}
+<h2 class="section-title">Order #{{ order['order_id'] }}</h2>
+<p><strong>Customer:</strong> {{ order['customer_name'] }}</p>
+<p><strong>Phone:</strong> {{ order['customer_phone'] }}</p>
+<p><strong>Address:</strong> {{ order['delivery_address'] }}</p>
+<p><strong>Status:</strong> {{ order['order_status']|capitalize }}</p>
+
+<table class="table table-bordered mt-3">
+  <thead><tr><th>Product</th><th>Qty</th><th>Price Each</th><th>Subtotal</th></tr></thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item['name'] }}</td>
+      <td>{{ item['quantity'] }}</td>
+      <td>Rs. {{ item['price_at_order'] }}</td>
+      <td>Rs. {{ (item['quantity'] * item['price_at_order'])|round(2) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<h4>Total: Rs. {{ order['total_amount'] }}</h4>
+<a href="{{ url_for('admin.orders') }}" class="btn btn-outline-secondary">Back to Orders</a>
+{% endblock %}

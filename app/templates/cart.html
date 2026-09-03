@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Your Cart - Virumart{% endblock %}
+
+{% block content %}
+<h2 class="section-title">Your Cart</h2>
+
+{% if cart_items %}
+  <div class="card shadow-sm">
+    <div class="card-body">
+      {% for item in cart_items %}
+      <div class="row align-items-center py-3 border-bottom">
+        <div class="col-md-4">
+          <strong>{{ item.product['name'] }}</strong><br>
+          <span class="text-secondary small">Rs. {{ item.product['selling_price'] }} each</span>
+        </div>
+        <div class="col-md-4">
+          <form action="{{ url_for('customer.update_cart', product_id=item.product['product_id'], action='decrease') }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-outline-secondary">-</button>
+          </form>
+          <span class="mx-2">{{ item.quantity }}</span>
+          <form action="{{ url_for('customer.update_cart', product_id=item.product['product_id'], action='increase') }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-outline-secondary">+</button>
+          </form>
+        </div>
+        <div class="col-md-2">
+          <span class="price-tag">Rs. {{ item.subtotal }}</span>
+        </div>
+        <div class="col-md-2 text-end">
+          <form action="{{ url_for('customer.remove_from_cart', product_id=item.product['product_id']) }}" method="POST">
+            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+
+      <div class="pt-4">
+        <div class="d-flex justify-content-between">
+          <span>Subtotal</span>
+          <span>Rs. {{ total }}</span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span>Delivery Charge</span>
+          {% if delivery_charge == 0 %}
+            <span class="text-success fw-bold">FREE</span>
+          {% else %}
+            <span>Rs. {{ delivery_charge }}</span>
+          {% endif %}
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">Total: <span class="price-tag">Rs. {{ grand_total }}</span></h4>
+          <a href="{{ url_for('customer.checkout') }}" class="btn btn-add-cart">Proceed to Checkout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <p>Your cart is empty. <a href="{{ url_for('customer.home') }}">Browse products</a> to add something.</p>
+{% endif %}
+{% endblock %}

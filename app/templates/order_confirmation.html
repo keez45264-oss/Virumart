@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed - Virumart{% endblock %}
+{% block content %}
+<div class="card shadow-sm text-center" style="max-width: 500px; margin: 0 auto;">
+  <div class="card-body py-5">
+    <h1 style="font-size: 3rem;">✅</h1>
+    <h3 class="mb-3">Order Placed Successfully!</h3>
+    <p class="text-secondary">Order #{{ order['order_id'] }}</p>
+    <p>Thank you, <strong>{{ order['customer_name'] }}</strong>! We'll deliver to:</p>
+    <p class="text-secondary">{{ order['delivery_address'] }}</p>
+    <p class="price-tag">Total: Rs. {{ order['total_amount'] }}</p>
+    <p class="small text-secondary">Payment: Cash on Delivery</p>
+    <a href="{{ url_for('customer.home') }}" class="btn btn-add-cart mt-3">Continue Shopping</a>
+  </div>
+</div>
+{% endblock %}

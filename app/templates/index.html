@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Virumart - Home{% endblock %}
+
+{% block hero %}
+<div class="hero-banner">
+    <h1>Fresh Groceries, Fast Delivery</h1>
+    <p>Everything your kitchen needs, from Virumart's shelves to your doorstep.</p>
+</div>
+{% endblock %}
+
+{% block content %}
+<h2 class="section-title">Our Products</h2>
+
+<form method="GET" class="mb-3">
+  <input type="text" name="q" value="{{ search_query }}" placeholder="Search products..." class="form-control" style="max-width: 400px;">
+</form>
+
+<div class="mb-4">
+  <a href="{{ url_for('customer.home') }}" class="btn btn-sm {% if not selected_category %}btn-add-cart{% else %}btn-outline-secondary{% endif %} me-2 mb-2">All</a>
+  {% for cat in categories %}
+  <a href="{{ url_for('customer.home', category=cat['category']) }}" class="btn btn-sm {% if selected_category == cat['category'] %}btn-add-cart{% else %}btn-outline-secondary{% endif %} me-2 mb-2">{{ cat['category'] }}</a>
+  {% endfor %}
+</div>
+
+<div class="row">
+  {% for product in products %}
+  <div class="col-md-4 mb-4">
+    <div class="card product-card h-100 shadow-sm">
+      {% if product['image_path'] %}
+      <img src="{{ url_for('static', filename='images/products/' + product['image_path']) }}" alt="{{ product['name'] }}" class="product-img">
+      {% else %}
+      <div class="product-img-placeholder">🛒</div>
+      {% endif %}
+      <div class="card-body">
+        <span class="category-badge">{{ product['category'] }}</span>
+        <h5 class="card-title mb-2">{{ product['name'] }}</h5>
+        <p class="price-tag mb-2">Rs. {{ product['selling_price'] }}</p>
+        <p class="small text-secondary mb-3">In stock: {{ product['quantity_in_stock'] }}</p>
+        <form action="{{ url_for('customer.add_to_cart', product_id=product['product_id']) }}" method="POST">
+          <button type="submit" class="btn btn-add-cart btn-sm">Add to Cart</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <p>No products found{% if search_query %} for "{{ search_query }}"{% endif %}{% if selected_category %} in {{ selected_category }}{% endif %}.</p>
+  {% endfor %}
+</div>
+{% endblock %}

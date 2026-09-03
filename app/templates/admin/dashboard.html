@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - Virumart{% endblock %}
+{% block content %}
+<h2 class="section-title">Admin Dashboard</h2>
+
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm p-3">
+      <h6 class="text-secondary">Total Products</h6>
+      <h3 class="price-tag">{{ total_products }}</h3>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm p-3">
+      <h6 class="text-secondary">Low Stock Items</h6>
+      <h3 class="price-tag">{{ low_stock|length }}</h3>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <a href="{{ url_for('admin.products') }}" class="btn btn-add-cart w-100 h-100 d-flex align-items-center justify-content-center">
+      Manage Products
+    </a>
+  </div>
+</div>
+
+{% if low_stock %}
+<h4 class="mb-3">⚠️ Low Stock Alerts</h4>
+<div class="card shadow-sm">
+  <div class="card-body">
+    {% for product in low_stock %}
+    <div class="d-flex justify-content-between border-bottom py-2">
+      <span>{{ product['name'] }}</span>
+      <span class="text-danger fw-bold">{{ product['quantity_in_stock'] }} left (reorder at {{ product['reorder_threshold'] }})</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<p class="text-secondary">No low-stock items right now — you're all stocked up!</p>
+{% endif %}
+{% endblock %}

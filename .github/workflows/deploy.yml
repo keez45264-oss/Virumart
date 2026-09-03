@@ -1,0 +1,29 @@
+# Phase 3: CI/CD pipeline placeholder
+# Will run tests on push, then deploy to EC2 automatically.
+
+name: Deploy Grocery App
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: echo "TODO: add tests, then run pytest here"
+
+  # deploy:
+  #   needs: build-and-test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Deploy to EC2
+  #       run: echo "TODO: SSH into EC2 and pull latest code / restart container"
