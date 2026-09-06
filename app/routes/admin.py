@@ -8,7 +8,7 @@ from flask import Blueprint, render_template, current_app, request, redirect, ur
 
 admin_bp = Blueprint('admin', __name__)
 
-UPLOAD_FOLDER = os.path.join('app', 'static', 'images')
+UPLOAD_FOLDER = os.path.join('app', 'static', 'images', 'products')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 
