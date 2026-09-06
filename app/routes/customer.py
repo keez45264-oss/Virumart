@@ -1,9 +1,9 @@
 """
 Customer-facing routes: browse products, cart, checkout.
 """
-import sqlite3
 from datetime import datetime
-from flask import Blueprint, render_template, current_app, session, redirect, url_for, request
+from flask import Blueprint, render_template, session, redirect, url_for, request
+from app.db import get_db_connection
 
 customer_bp = Blueprint('customer', __name__)
 
@@ -21,12 +21,6 @@ def get_delivery_charge(subtotal):
     return charge
 
 
-def get_db_connection():
-    conn = sqlite3.connect(current_app.config['DATABASE'])
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
 @customer_bp.route('/')
 def home():
     conn = get_db_connection()
@@ -38,11 +32,11 @@ def home():
     params = []
 
     if search_query:
-        sql += ' AND name LIKE ?'
+        sql += ' AND name LIKE %s'
         params.append(f'%{search_query}%')
 
     if selected_category:
-        sql += ' AND category = ?'
+        sql += ' AND category = %s'
         params.append(selected_category)
 
     sql += ' ORDER BY name'
@@ -96,7 +90,7 @@ def get_cart_items_and_total(conn, cart_data):
     total = 0
     for product_id_str, quantity in cart_data.items():
         product = conn.execute(
-            'SELECT * FROM products WHERE product_id = ?', (product_id_str,)
+            'SELECT * FROM products WHERE product_id = %s', (product_id_str,)
         ).fetchone()
         if product:
             subtotal = product['selling_price'] * quantity
@@ -141,42 +135,41 @@ def checkout():
         delivery_charge = get_delivery_charge(total)
         grand_total = total + delivery_charge
 
-        # Create the order (total_amount stored is the grand total, including delivery)
         order_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         cursor = conn.execute(
             '''INSERT INTO orders
                (customer_name, customer_phone, delivery_address, order_status, order_date, total_amount)
-               VALUES (?, ?, ?, 'pending', ?, ?)''',
+               VALUES (%s, %s, %s, 'pending', %s, %s)
+               RETURNING order_id''',
             (customer_name, customer_phone, delivery_address, order_date, grand_total)
         )
-        order_id = cursor.lastrowid
+        order_id = cursor.fetchone()['order_id']
 
-        # Add order items + deduct stock + log as an online sale
         for item in cart_items:
             product = item['product']
             quantity = item['quantity']
 
             conn.execute(
                 '''INSERT INTO order_items (order_id, product_id, quantity, price_at_order)
-                   VALUES (?, ?, ?, ?)''',
+                   VALUES (%s, %s, %s, %s)''',
                 (order_id, product['product_id'], quantity, product['selling_price'])
             )
 
             conn.execute(
-                'UPDATE products SET quantity_in_stock = quantity_in_stock - ? WHERE product_id = ?',
+                'UPDATE products SET quantity_in_stock = quantity_in_stock - %s WHERE product_id = %s',
                 (quantity, product['product_id'])
             )
 
             conn.execute(
                 '''INSERT INTO sales (product_id, quantity_sold, sale_date, total_amount, source)
-                   VALUES (?, ?, ?, ?, 'online')''',
+                   VALUES (%s, %s, %s, %s, 'online')''',
                 (product['product_id'], quantity, order_date, item['subtotal'])
             )
 
         conn.commit()
         conn.close()
 
-        session['cart'] = {}  # empty the cart
+        session['cart'] = {}
         return redirect(url_for('customer.order_confirmation', order_id=order_id))
 
     cart_items, total = get_cart_items_and_total(conn, cart_data)
@@ -193,7 +186,7 @@ def checkout():
 def order_confirmation(order_id):
     conn = get_db_connection()
     order = conn.execute(
-        'SELECT * FROM orders WHERE order_id = ?', (order_id,)
+        'SELECT * FROM orders WHERE order_id = %s', (order_id,)
     ).fetchone()
     conn.close()
     return render_template('order_confirmation.html', order=order)

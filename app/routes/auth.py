@@ -1,18 +1,12 @@
 """
 Customer authentication: signup, login, logout.
 """
-import sqlite3
 from datetime import datetime
-from flask import Blueprint, render_template, current_app, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
+from app.db import get_db_connection
 
 auth_bp = Blueprint('auth', __name__)
-
-
-def get_db_connection():
-    conn = sqlite3.connect(current_app.config['DATABASE'])
-    conn.row_factory = sqlite3.Row
-    return conn
 
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
@@ -24,7 +18,7 @@ def signup():
         password = request.form['password']
 
         conn = get_db_connection()
-        existing = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+        existing = conn.execute('SELECT * FROM users WHERE email = %s', (email,)).fetchone()
 
         if existing:
             conn.close()
@@ -34,11 +28,13 @@ def signup():
         created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         cursor = conn.execute(
-            'INSERT INTO users (name, email, phone, password_hash, created_at) VALUES (?, ?, ?, ?, ?)',
+            '''INSERT INTO users (name, email, phone, password_hash, created_at)
+               VALUES (%s, %s, %s, %s, %s)
+               RETURNING user_id''',
             (name, email, phone, password_hash, created_at)
         )
+        user_id = cursor.fetchone()['user_id']
         conn.commit()
-        user_id = cursor.lastrowid
         conn.close()
 
         session['user_id'] = user_id
@@ -55,7 +51,7 @@ def login():
         password = request.form['password']
 
         conn = get_db_connection()
-        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+        user = conn.execute('SELECT * FROM users WHERE email = %s', (email,)).fetchone()
         conn.close()
 
         if user and check_password_hash(user['password_hash'], password):
