@@ -1,10 +1,10 @@
 """
 Admin routes: manage products, stock, view orders, view sales.
 """
-import sqlite3
 import os
 from werkzeug.utils import secure_filename
-from flask import Blueprint, render_template, current_app, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for
+from app.db import get_db_connection
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -28,19 +28,13 @@ def save_product_image(file, product_name):
     return None
 
 
-def get_db_connection():
-    conn = sqlite3.connect(current_app.config['DATABASE'])
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
 @admin_bp.route('/')
 def dashboard():
     conn = get_db_connection()
     low_stock = conn.execute(
         'SELECT * FROM products WHERE quantity_in_stock <= reorder_threshold'
     ).fetchall()
-    total_products = conn.execute('SELECT COUNT(*) FROM products').fetchone()[0]
+    total_products = conn.execute('SELECT COUNT(*) FROM products').fetchone()['count']
     conn.close()
     return render_template('admin/dashboard.html', low_stock=low_stock, total_products=total_products)
 
@@ -70,7 +64,7 @@ def add_product():
         conn.execute(
             '''INSERT INTO products
                (name, category, cost_price, selling_price, quantity_in_stock, reorder_threshold, image_path)
-               VALUES (?, ?, ?, ?, ?, ?, ?)''',
+               VALUES (%s, %s, %s, %s, %s, %s, %s)''',
             (name, category, cost_price, selling_price, quantity_in_stock, reorder_threshold, image_filename)
         )
         conn.commit()
@@ -97,15 +91,15 @@ def edit_product(product_id):
 
         if new_image_filename:
             conn.execute(
-                '''UPDATE products SET name=?, category=?, cost_price=?, selling_price=?,
-                   quantity_in_stock=?, reorder_threshold=?, image_path=? WHERE product_id=?''',
+                '''UPDATE products SET name=%s, category=%s, cost_price=%s, selling_price=%s,
+                   quantity_in_stock=%s, reorder_threshold=%s, image_path=%s WHERE product_id=%s''',
                 (name, category, cost_price, selling_price, quantity_in_stock,
                  reorder_threshold, new_image_filename, product_id)
             )
         else:
             conn.execute(
-                '''UPDATE products SET name=?, category=?, cost_price=?, selling_price=?,
-                   quantity_in_stock=?, reorder_threshold=? WHERE product_id=?''',
+                '''UPDATE products SET name=%s, category=%s, cost_price=%s, selling_price=%s,
+                   quantity_in_stock=%s, reorder_threshold=%s WHERE product_id=%s''',
                 (name, category, cost_price, selling_price, quantity_in_stock, reorder_threshold, product_id)
             )
         conn.commit()
@@ -113,7 +107,7 @@ def edit_product(product_id):
         return redirect(url_for('admin.products'))
 
     product = conn.execute(
-        'SELECT * FROM products WHERE product_id = ?', (product_id,)
+        'SELECT * FROM products WHERE product_id = %s', (product_id,)
     ).fetchone()
     conn.close()
     return render_template('admin/edit_product.html', product=product)
@@ -122,7 +116,7 @@ def edit_product(product_id):
 @admin_bp.route('/products/delete/<int:product_id>', methods=['POST'])
 def delete_product(product_id):
     conn = get_db_connection()
-    conn.execute('DELETE FROM products WHERE product_id = ?', (product_id,))
+    conn.execute('DELETE FROM products WHERE product_id = %s', (product_id,))
     conn.commit()
     conn.close()
     return redirect(url_for('admin.products'))
@@ -141,7 +135,7 @@ def orders():
             '''SELECT order_items.quantity, order_items.price_at_order, products.name
                FROM order_items
                JOIN products ON order_items.product_id = products.product_id
-               WHERE order_items.order_id = ?''',
+               WHERE order_items.order_id = %s''',
             (order['order_id'],)
         ).fetchall()
         orders_with_items.append({'order': order, 'line_items': items})
@@ -155,7 +149,7 @@ def update_order_status(order_id):
     new_status = request.form['status']
     conn = get_db_connection()
     conn.execute(
-        'UPDATE orders SET order_status = ? WHERE order_id = ?',
+        'UPDATE orders SET order_status = %s WHERE order_id = %s',
         (new_status, order_id)
     )
     conn.commit()

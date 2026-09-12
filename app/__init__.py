@@ -8,7 +8,6 @@ from flask import Flask, session
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'change-this-in-production'
-    app.config['DATABASE'] = 'database/grocery.db'
 
     # Register blueprints (route groups) here as they're built
     from app.routes.customer import customer_bp

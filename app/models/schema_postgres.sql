@@ -1,3 +1,5 @@
+-- Grocery Store Management System — PostgreSQL Schema
+
 CREATE TABLE IF NOT EXISTS products (
     product_id      SERIAL PRIMARY KEY,
     name            TEXT NOT NULL,
