@@ -9,7 +9,20 @@
     <p>Thank you, <strong>{{ order['customer_name'] }}</strong>! We'll deliver to:</p>
     <p class="text-secondary">{{ order['delivery_address'] }}</p>
     <p class="price-tag">Total: Rs. {{ order['total_amount'] }}</p>
-    <p class="small text-secondary">Payment: Cash on Delivery</p>
+
+    {% if order['payment_method'] == 'card' %}
+      <p class="small">
+        Payment: <strong>Card</strong>
+        {% if order['payment_status'] == 'paid' %}
+          <span class="badge bg-success">Paid</span>
+        {% else %}
+          <span class="badge bg-warning text-dark">Pending</span>
+        {% endif %}
+      </p>
+    {% else %}
+      <p class="small text-secondary">Payment: Cash on Delivery</p>
+    {% endif %}
+
     <a href="{{ url_for('customer.home') }}" class="btn btn-add-cart mt-3">Continue Shopping</a>
   </div>
 </div>

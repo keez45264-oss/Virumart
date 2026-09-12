@@ -8,7 +8,7 @@
     <div class="card shadow-sm mb-4">
       <div class="card-body">
         <h5 class="mb-3">Delivery Details</h5>
-        <form method="POST">
+        <form method="POST" id="checkout-form">
           <div class="mb-3">
             <label class="form-label">Full Name</label>
             <input type="text" name="customer_name" class="form-control" required>
@@ -21,8 +21,38 @@
             <label class="form-label">Delivery Address</label>
             <textarea name="delivery_address" class="form-control" rows="3" required></textarea>
           </div>
-          <p class="text-secondary small">Payment: Cash on Delivery</p>
-          <button type="submit" class="btn btn-add-cart">Place Order</button>
+
+          <h5 class="mb-3 mt-4">Payment Method</h5>
+          <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="payment_method" value="cod" id="pay-cod" checked>
+              <label class="form-check-label" for="pay-cod">Cash on Delivery</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="payment_method" value="card" id="pay-card">
+              <label class="form-check-label" for="pay-card">Pay Online (Test Mode)</label>
+            </div>
+          </div>
+
+          <div id="card-fields" class="mb-3" style="display: none;">
+            <div class="mb-2">
+              <label class="form-label">Card Number</label>
+              <input type="text" class="form-control" placeholder="4242 4242 4242 4242" maxlength="19" id="card-number">
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <label class="form-label">Expiry</label>
+                <input type="text" class="form-control" placeholder="MM/YY" maxlength="5" id="card-expiry">
+              </div>
+              <div class="col-6">
+                <label class="form-label">CVC</label>
+                <input type="text" class="form-control" placeholder="123" maxlength="3" id="card-cvc">
+              </div>
+            </div>
+            <p class="text-secondary small mt-2">Test mode — no real payment is processed. Use any values above.</p>
+          </div>
+
+          <button type="submit" class="btn btn-add-cart" id="submit-btn">Place Order</button>
         </form>
       </div>
     </div>
@@ -60,4 +90,24 @@
     </div>
   </div>
 </div>
+
+<script>
+  const codRadio = document.getElementById('pay-cod');
+  const cardRadio = document.getElementById('pay-card');
+  const cardFields = document.getElementById('card-fields');
+  const submitBtn = document.getElementById('submit-btn');
+
+  function toggleCardFields() {
+    if (cardRadio.checked) {
+      cardFields.style.display = 'block';
+      submitBtn.textContent = 'Pay & Place Order';
+    } else {
+      cardFields.style.display = 'none';
+      submitBtn.textContent = 'Place Order';
+    }
+  }
+
+  codRadio.addEventListener('change', toggleCardFields);
+  cardRadio.addEventListener('change', toggleCardFields);
+</script>
 {% endblock %}

@@ -130,18 +130,24 @@ def checkout():
         customer_name = request.form['customer_name']
         customer_phone = request.form['customer_phone']
         delivery_address = request.form['delivery_address']
+        payment_method = request.form.get('payment_method', 'cod')
 
         cart_items, total = get_cart_items_and_total(conn, cart_data)
         delivery_charge = get_delivery_charge(total)
         grand_total = total + delivery_charge
 
+        # Simulate payment processing for "card" method (test/mock only, no real payment)
+        payment_status = 'paid' if payment_method == 'card' else 'pending'
+
         order_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         cursor = conn.execute(
             '''INSERT INTO orders
-               (customer_name, customer_phone, delivery_address, order_status, order_date, total_amount)
-               VALUES (%s, %s, %s, 'pending', %s, %s)
+               (customer_name, customer_phone, delivery_address, order_status, order_date,
+                total_amount, payment_method, payment_status)
+               VALUES (%s, %s, %s, 'pending', %s, %s, %s, %s)
                RETURNING order_id''',
-            (customer_name, customer_phone, delivery_address, order_date, grand_total)
+            (customer_name, customer_phone, delivery_address, order_date, grand_total,
+             payment_method, payment_status)
         )
         order_id = cursor.fetchone()['order_id']
 
