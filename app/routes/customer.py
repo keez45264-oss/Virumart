@@ -59,7 +59,10 @@ def add_to_cart(product_id):
     product_id_str = str(product_id)
     cart[product_id_str] = cart.get(product_id_str, 0) + 1
     session['cart'] = cart
-    return redirect(request.referrer or url_for('customer.home'))
+
+    redirect_url = request.referrer or url_for('customer.home')
+    separator = '&' if '?' in redirect_url else '?'
+    return redirect(f"{redirect_url}{separator}added=1")
 
 
 @customer_bp.route('/remove-from-cart/<int:product_id>', methods=['POST'])

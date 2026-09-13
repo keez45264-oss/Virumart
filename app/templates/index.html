@@ -23,8 +23,8 @@
 </div>
 
 <div class="row">
-  {% for product in products %}
-  <div class="col-md-4 mb-4">
+    {% for product in products %}
+  <div class="col-md-4 mb-4" style="animation-delay: {{ loop.index0 * 0.06 }}s;">
     <div class="card product-card h-100 shadow-sm">
       {% if product['image_path'] %}
       <img src="{{ url_for('static', filename='images/products/' + product['image_path']) }}" alt="{{ product['name'] }}" class="product-img">
