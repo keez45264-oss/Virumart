@@ -9,13 +9,13 @@
 {% endblock %}
 
 {% block content %}
-<h2 class="section-title">Our Products</h2>
+<h2 class="section-title" id="products">Our Products</h2>
 
 <form method="GET" class="mb-3">
   <input type="text" name="q" value="{{ search_query }}" placeholder="Search products..." class="form-control" style="max-width: 400px;">
 </form>
 
-<div class="mb-4">
+<div class="mb-4" id="categories">
   <a href="{{ url_for('customer.home') }}" class="btn btn-sm {% if not selected_category %}btn-add-cart{% else %}btn-outline-secondary{% endif %} me-2 mb-2">All</a>
   {% for cat in categories %}
   <a href="{{ url_for('customer.home', category=cat['category']) }}" class="btn btn-sm {% if selected_category == cat['category'] %}btn-add-cart{% else %}btn-outline-secondary{% endif %} me-2 mb-2">{{ cat['category'] }}</a>
