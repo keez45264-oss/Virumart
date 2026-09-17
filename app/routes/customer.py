@@ -59,10 +59,9 @@ def add_to_cart(product_id):
     product_id_str = str(product_id)
     cart[product_id_str] = cart.get(product_id_str, 0) + 1
     session['cart'] = cart
-
-    redirect_url = request.referrer or url_for('customer.home')
-    separator = '&' if '?' in redirect_url else '?'
-    return redirect(f"{redirect_url}{separator}added=1")
+    referrer = request.referrer or url_for('customer.home')
+    separator = '&' if '?' in referrer else '?'
+    return redirect(f"{referrer}{separator}added=1")
 
 
 @customer_bp.route('/remove-from-cart/<int:product_id>', methods=['POST'])
@@ -139,7 +138,6 @@ def checkout():
         delivery_charge = get_delivery_charge(total)
         grand_total = total + delivery_charge
 
-        # Simulate payment processing for "card" method (test/mock only, no real payment)
         payment_status = 'paid' if payment_method == 'card' else 'pending'
 
         order_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
