@@ -1,49 +1,589 @@
 {% extends "base.html" %}
-{% block title %}Virumart - Home{% endblock %}
+
+{% block title %}Virumart - Fresh Groceries Online{% endblock %}
 
 {% block hero %}
-<div class="hero-banner">
-    <h1>Fresh Groceries, Fast Delivery</h1>
-    <p>Everything your kitchen needs, from Virumart's shelves to your doorstep.</p>
-</div>
+
+<section class="home-hero">
+
+    <div class="hero-content">
+
+        <span class="hero-eyebrow">
+            <span class="hero-eyebrow-dot"></span>
+            Fresh groceries, everyday
+        </span>
+
+        <h1>
+            Everything you need.
+            <span>Delivered fresh.</span>
+        </h1>
+
+        <p>
+            Shop everyday groceries, snacks, dairy and essentials
+            from Virumart — simple, convenient and reliable.
+        </p>
+
+        <div class="hero-actions">
+
+            <a href="#products" class="hero-primary-btn">
+                Shop Products
+                <span>→</span>
+            </a>
+
+            <a href="#categories" class="hero-secondary-btn">
+                Browse Categories
+            </a>
+
+        </div>
+
+        <div class="hero-trust">
+
+            <div class="hero-trust-item">
+                <strong>Fresh</strong>
+                <span>Everyday essentials</span>
+            </div>
+
+            <div class="hero-trust-divider"></div>
+
+            <div class="hero-trust-item">
+                <strong>Fast</strong>
+                <span>Convenient delivery</span>
+            </div>
+
+            <div class="hero-trust-divider"></div>
+
+            <div class="hero-trust-item">
+                <strong>Secure</strong>
+                <span>Easy checkout</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="hero-visual">
+
+        <div class="hero-glow hero-glow-one"></div>
+        <div class="hero-glow hero-glow-two"></div>
+
+        <div class="hero-orbit hero-orbit-one"></div>
+        <div class="hero-orbit hero-orbit-two"></div>
+
+        <div class="hero-shopping-card">
+
+            <div class="hero-shopping-top">
+                <span>Today's basket</span>
+                <span class="hero-live-dot">● Fresh</span>
+            </div>
+
+            <div class="hero-product-preview">
+
+                <div class="hero-product-icon">
+                    🥬
+                </div>
+
+                <div>
+                    <strong>Fresh Essentials</strong>
+                    <span>Groceries & daily needs</span>
+                </div>
+
+                <div class="hero-check">
+                    ✓
+                </div>
+
+            </div>
+
+            <div class="hero-product-preview">
+
+                <div class="hero-product-icon hero-icon-light">
+                    🍎
+                </div>
+
+                <div>
+                    <strong>Quality Produce</strong>
+                    <span>Selected for your home</span>
+                </div>
+
+                <div class="hero-check">
+                    ✓
+                </div>
+
+            </div>
+
+            <div class="hero-basket-footer">
+                <span>Ready for delivery</span>
+                <strong>🛵</strong>
+            </div>
+
+        </div>
+
+        <div class="hero-floating-badge hero-badge-delivery">
+            <span>🚚</span>
+            <div>
+                <strong>Convenient</strong>
+                <small>Delivery</small>
+            </div>
+        </div>
+
+        <div class="hero-floating-badge hero-badge-quality">
+            <span>✨</span>
+            <div>
+                <strong>Quality</strong>
+                <small>Products</small>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
 {% endblock %}
 
+
 {% block content %}
-<h2 class="section-title" id="products">Our Products</h2>
 
-<form method="GET" class="mb-3">
-  <input type="text" name="q" value="{{ search_query }}" placeholder="Search products..." class="form-control" style="max-width: 400px;">
-</form>
+<div class="homepage-content">
 
-<div class="mb-4" id="categories">
-  <a href="{{ url_for('customer.home') }}" class="btn btn-sm {% if not selected_category %}btn-add-cart{% else %}btn-outline-secondary{% endif %} me-2 mb-2">All</a>
-  {% for cat in categories %}
-  <a href="{{ url_for('customer.home', category=cat['category']) }}" class="btn btn-sm {% if selected_category == cat['category'] %}btn-add-cart{% else %}btn-outline-secondary{% endif %} me-2 mb-2">{{ cat['category'] }}</a>
-  {% endfor %}
+
+    <!-- =====================================================
+         SHOP BY CATEGORY
+         ===================================================== -->
+
+    <section class="category-section" id="categories">
+
+        <div class="section-heading-row">
+
+            <div>
+                <span class="section-eyebrow">EXPLORE</span>
+
+                <h2 class="section-title">
+                    Shop by Category
+                </h2>
+            </div>
+
+            <p class="section-description">
+                Find your everyday essentials faster.
+            </p>
+
+        </div>
+
+
+        <div class="category-grid">
+
+            <a href="{{ url_for('customer.home') }}"
+               class="category-card category-card-all">
+
+                <div class="category-card-icon">
+                    🛒
+                </div>
+
+                <div class="category-card-info">
+                    <strong>All Products</strong>
+                    <span>View everything</span>
+                </div>
+
+                <span class="category-arrow">→</span>
+
+            </a>
+
+
+            {% for cat in categories %}
+
+            <a href="{{ url_for('customer.home', category=cat['category']) }}"
+               class="category-card">
+
+                <div class="category-card-icon">
+
+                    {% if cat['category'] == 'Fruits' %}
+                        🍎
+                    {% elif cat['category'] == 'Dairy' %}
+                        🥛
+                    {% elif cat['category'] == 'Grains' %}
+                        🌾
+                    {% elif cat['category'] == 'Snacks' %}
+                        🥜
+                    {% else %}
+                        🛍️
+                    {% endif %}
+
+                </div>
+
+                <div class="category-card-info">
+
+                    <strong>{{ cat['category'] }}</strong>
+
+                    <span>
+                        Explore products
+                    </span>
+
+                </div>
+
+                <span class="category-arrow">→</span>
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         PRODUCTS
+         ===================================================== -->
+
+    <section class="products-section" id="products">
+
+        <div class="section-heading-row products-heading">
+
+            <div>
+
+                <span class="section-eyebrow">VIRUMART PICKS</span>
+
+                <h2 class="section-title">
+                    Our Products
+                </h2>
+
+            </div>
+
+            <span class="products-count">
+                {{ products|length }} products
+            </span>
+
+        </div>
+
+
+        <!-- Search -->
+
+        <div class="product-toolbar">
+
+            <form method="GET" class="product-search">
+
+                <div class="search-input-wrapper">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ search_query }}"
+                        placeholder="Search groceries, snacks, dairy..."
+                        aria-label="Search products"
+                    >
+
+                    {% if selected_category %}
+                    <input
+                        type="hidden"
+                        name="category"
+                        value="{{ selected_category }}"
+                    >
+                    {% endif %}
+
+                    {% if search_query %}
+                    <a
+                        href="{{ url_for('customer.home', category=selected_category) if selected_category else url_for('customer.home') }}"
+                        class="search-clear"
+                        aria-label="Clear search"
+                    >
+                        ×
+                    </a>
+                    {% endif %}
+
+                </div>
+
+                <button type="submit" class="search-button">
+                    Search
+                </button>
+
+            </form>
+
+
+            <!-- Active filter -->
+
+            {% if selected_category or search_query %}
+
+            <div class="active-filters">
+
+                <span>Showing:</span>
+
+                {% if selected_category %}
+                <span class="active-filter">
+                    {{ selected_category }}
+                </span>
+                {% endif %}
+
+                {% if search_query %}
+                <span class="active-filter">
+                    "{{ search_query }}"
+                </span>
+                {% endif %}
+
+                <a href="{{ url_for('customer.home') }}">
+                    Clear all
+                </a>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Category filters -->
+
+            <div class="category-filters">
+
+                <a
+                    href="{{ url_for('customer.home') }}"
+                    class="category-filter {% if not selected_category %}active{% endif %}"
+                >
+                    All
+                </a>
+
+                {% for cat in categories %}
+
+                <a
+                    href="{{ url_for('customer.home', category=cat['category']) }}"
+                    class="category-filter {% if selected_category == cat['category'] %}active{% endif %}"
+                >
+                    {{ cat['category'] }}
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Product grid -->
+
+        <div class="homepage-product-grid">
+
+            {% for product in products %}
+
+            <article
+                class="homepage-product-card"
+                style="animation-delay: {{ loop.index0 * 0.06 }}s;"
+            >
+
+                <a
+                    href="{{ url_for('customer.product_detail', product_id=product['product_id']) }}"
+                    class="product-image-link"
+                >
+
+                    <div class="homepage-product-image">
+
+                        {% if product['image_path'] %}
+
+                        <img
+                            src="{{ url_for('static', filename='images/products/' + product['image_path']) }}"
+                            alt="{{ product['name'] }}"
+                            loading="lazy"
+                        >
+
+                        {% else %}
+
+                        <div class="homepage-product-placeholder">
+
+                            {% if product['category'] == 'Fruits' %}
+                                🍎
+                            {% elif product['category'] == 'Dairy' %}
+                                🥛
+                            {% elif product['category'] == 'Grains' %}
+                                🌾
+                            {% elif product['category'] == 'Snacks' %}
+                                🥜
+                            {% else %}
+                                🛒
+                            {% endif %}
+
+                        </div>
+
+                        {% endif %}
+
+
+                        <span class="product-view-badge">
+                            View Product →
+                        </span>
+
+                    </div>
+
+                </a>
+
+
+                <div class="homepage-product-body">
+
+                    <span class="homepage-product-category">
+                        {{ product['category'] }}
+                    </span>
+
+
+                    <a
+                        href="{{ url_for('customer.product_detail', product_id=product['product_id']) }}"
+                        class="homepage-product-name"
+                    >
+                        {{ product['name'] }}
+                    </a>
+
+
+                    <div class="homepage-product-bottom">
+
+                        <div>
+
+                            <span class="homepage-product-price">
+                                Rs. {{ product['selling_price'] }}
+                            </span>
+
+                            <span class="homepage-product-stock">
+                                {{ product['quantity_in_stock'] }} available
+                            </span>
+
+                        </div>
+
+
+                        <form
+                            action="{{ url_for('customer.add_to_cart', product_id=product['product_id']) }}"
+                            method="POST"
+                        >
+
+                            <button
+                                type="submit"
+                                class="homepage-add-button"
+                                aria-label="Add {{ product['name'] }} to cart"
+                            >
+                                +
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            {% else %}
+
+            <div class="homepage-empty-state">
+
+                <div class="empty-state-icon">
+                    🔎
+                </div>
+
+                <h3>No products found</h3>
+
+                <p>
+                    {% if search_query %}
+                        We couldn't find anything matching
+                        "<strong>{{ search_query }}</strong>".
+                    {% elif selected_category %}
+                        There are currently no products in
+                        <strong>{{ selected_category }}</strong>.
+                    {% else %}
+                        There are no products available right now.
+                    {% endif %}
+                </p>
+
+                <a
+                    href="{{ url_for('customer.home') }}"
+                    class="empty-state-button"
+                >
+                    View All Products
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         WHY VIRUMART
+         ===================================================== -->
+
+    <section class="why-virumart">
+
+        <div class="why-heading">
+
+            <span class="section-eyebrow">
+                WHY VIRUMART
+            </span>
+
+            <h2>
+                Grocery shopping,
+                <span>made simple.</span>
+            </h2>
+
+        </div>
+
+
+        <div class="why-grid">
+
+            <div class="why-card">
+
+                <div class="why-icon">
+                    🚚
+                </div>
+
+                <div>
+                    <h3>Convenient Delivery</h3>
+
+                    <p>
+                        Get your everyday groceries delivered
+                        right to your doorstep.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="why-card">
+
+                <div class="why-icon">
+                    🥬
+                </div>
+
+                <div>
+                    <h3>Quality Products</h3>
+
+                    <p>
+                        Shop everyday essentials from
+                        Virumart's growing collection.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="why-card">
+
+                <div class="why-icon">
+                    🔒
+                </div>
+
+                <div>
+                    <h3>Simple & Secure</h3>
+
+                    <p>
+                        A straightforward shopping and
+                        checkout experience.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
 </div>
 
-<div class="row">
-    {% for product in products %}
-  <div class="col-md-4 mb-4" style="animation-delay: {{ loop.index0 * 0.06 }}s;">
-    <div class="card product-card h-100 shadow-sm">
-      {% if product['image_path'] %}
-      <img src="{{ url_for('static', filename='images/products/' + product['image_path']) }}" alt="{{ product['name'] }}" class="product-img">
-      {% else %}
-      <div class="product-img-placeholder">🛒</div>
-      {% endif %}
-      <div class="card-body">
-        <span class="category-badge">{{ product['category'] }}</span>
-        <h5 class="card-title mb-2">{{ product['name'] }}</h5>
-        <p class="price-tag mb-2">Rs. {{ product['selling_price'] }}</p>
-        <p class="small text-secondary mb-3">In stock: {{ product['quantity_in_stock'] }}</p>
-        <form action="{{ url_for('customer.add_to_cart', product_id=product['product_id']) }}" method="POST">
-          <button type="submit" class="btn btn-add-cart btn-sm">Add to Cart</button>
-        </form>
-      </div>
-    </div>
-  </div>
-  {% else %}
-  <p>No products found{% if search_query %} for "{{ search_query }}"{% endif %}{% if selected_category %} in {{ selected_category }}{% endif %}.</p>
-  {% endfor %}
-</div>
 {% endblock %}

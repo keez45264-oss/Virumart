@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+{{ product['name'] }} - Virumart
+{% endblock %}
+
+
+{% block content %}
+
+<div class="product-detail-page">
+
+
+    <!-- BACK TO PRODUCTS -->
+
+    <div class="product-detail-back">
+
+        <a
+            href="{{ url_for('customer.home') }}"
+            class="product-back-link"
+        >
+            ← Back to Products
+        </a>
+
+    </div>
+
+
+    <!-- PRODUCT DETAIL -->
+
+    <div class="product-detail-card">
+
+
+        <!-- PRODUCT IMAGE -->
+
+        <div class="product-detail-image-section">
+
+            {% if product['image_path'] %}
+
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/products/' + product['image_path']
+                ) }}"
+                alt="{{ product['name'] }}"
+                class="product-detail-img"
+            >
+
+            {% else %}
+
+            <div class="product-detail-placeholder">
+                🛒
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- PRODUCT INFORMATION -->
+
+        <div class="product-detail-info">
+
+
+            <!-- CATEGORY -->
+
+            <span class="category-badge product-detail-category">
+                {{ product['category'] }}
+            </span>
+
+
+            <!-- NAME -->
+
+            <h1 class="product-detail-title">
+                {{ product['name'] }}
+            </h1>
+
+
+            <!-- PRICE -->
+
+            <div class="product-detail-price">
+                Rs. {{ product['selling_price'] }}
+            </div>
+
+
+            <!-- STOCK -->
+
+            {% if product['quantity_in_stock'] > 0 %}
+
+            <div class="product-stock available">
+
+                <span class="stock-dot"></span>
+
+                In Stock
+
+                <span class="stock-count">
+                    ({{ product['quantity_in_stock'] }} available)
+                </span>
+
+            </div>
+
+            {% else %}
+
+            <div class="product-stock unavailable">
+
+                <span class="stock-dot"></span>
+
+                Out of Stock
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="product-detail-description">
+
+                <h3>
+                    Product Information
+                </h3>
+
+                <p>
+                    Fresh and quality
+                    {{ product['name'] }}
+                    available from Virumart.
+                </p>
+
+                <div class="product-info-row">
+
+                    <span>Category</span>
+
+                    <strong>
+                        {{ product['category'] }}
+                    </strong>
+
+                </div>
+
+
+                <div class="product-info-row">
+
+                    <span>Availability</span>
+
+                    <strong>
+
+                        {% if product['quantity_in_stock'] > 0 %}
+                            In Stock
+                        {% else %}
+                            Out of Stock
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- ADD TO CART -->
+
+            {% if product['quantity_in_stock'] > 0 %}
+
+            <form
+                action="{{ url_for(
+                    'customer.add_to_cart',
+                    product_id=product['product_id']
+                ) }}"
+                method="POST"
+                class="product-detail-cart-form"
+            >
+
+                <button
+                    type="submit"
+                    class="btn btn-add-cart product-detail-cart-button"
+                >
+                    Add to Cart
+                </button>
+
+            </form>
+
+            {% else %}
+
+            <button
+                type="button"
+                class="btn product-out-of-stock-button"
+                disabled
+            >
+                Currently Unavailable
+            </button>
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+
+    <!-- SHOPPING BENEFITS -->
+
+    <div class="product-benefits">
+
+
+        <div class="product-benefit">
+
+            <div class="benefit-icon">
+                🚚
+            </div>
+
+            <div>
+
+                <strong>
+                    Convenient Delivery
+                </strong>
+
+                <p>
+                    Get your groceries delivered
+                    to your doorstep.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="product-benefit">
+
+            <div class="benefit-icon">
+                🥬
+            </div>
+
+            <div>
+
+                <strong>
+                    Quality Products
+                </strong>
+
+                <p>
+                    Shop everyday grocery essentials
+                    from Virumart.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="product-benefit">
+
+            <div class="benefit-icon">
+                🔒
+            </div>
+
+            <div>
+
+                <strong>
+                    Simple & Secure
+                </strong>
+
+                <p>
+                    Easy shopping and checkout
+                    experience.
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}
