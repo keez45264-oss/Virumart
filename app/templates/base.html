@@ -454,7 +454,16 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 
-{% block scripts %}{% endblock %}
-
+{% block scripts %}{% endblock %} 
+<script>
+    (function() {
+        if (window.location.search.includes('added=1')) {
+            const params = new URLSearchParams(window.location.search);
+            params.delete('added');
+            const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+            window.history.replaceState({}, '', newUrl);
+        }
+    })();
+</script>
 </body>
 </html>
